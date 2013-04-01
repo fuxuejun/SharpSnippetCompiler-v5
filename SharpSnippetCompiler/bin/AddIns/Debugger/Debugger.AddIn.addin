@@ -1,0 +1,152 @@
+﻿<AddIn name="Debugger"
+       author="David Srbecký"
+       copyright="prj:///doc/copyright.txt"
+       description="SharpDevelop Managed Debugger"
+       addInManagerHidden = "preinstalled">
+	
+	<Manifest>
+		<Identity name = "ICSharpCode.Debugger"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly="Debugger.AddIn.dll">
+			<ConditionEvaluator name = "IsBreakpointSet" class = "Debugger.AddIn.IsBreakpointCondition"/>
+			<ConditionEvaluator name = "IsBreakpointActive" class="Debugger.AddIn.IsActiveBreakpointCondition" />
+		</Import>
+		<Import assembly="Debugger.Core.dll"/>
+	</Runtime>	
+	
+	<Path name="/SharpDevelop/Services/DebuggerService/Debugger">
+		<Debugger id="DefaultDebugger"
+		          supportsStepping = "true"
+		          supportsExecutionControl = "true"
+		          supportsAttaching = "true"
+		          supportsDetaching = "true"
+		          class="ICSharpCode.SharpDevelop.Services.WindowsDebugger"/>
+	</Path>
+	
+	<Path name = "/SharpDevelop/ViewContent/TextEditor/ContextMenu">
+		<Condition name = "IsProcessRunning" isdebugging="True">
+			<Condition name = "IsProcessRunning" isdebugging="True" isprocessrunning="False">
+				<MenuItem id = "DebuggerSetCurrentStatement"
+				          insertbefore = "Refactoring"
+				          label = "${res:MainWindow.Windows.Debug.SetCurrentStatement}"
+				          icon = "Icons.16x16.Debug.StepInto"
+				          class = "ICSharpCode.SharpDevelop.Services.SetCurrentStatementCommand"/>
+			</Condition>
+			<MenuItem id = "DebuggerRunToCursor"
+			          insertbefore = "Refactoring"
+			          label = "${res:MainWindow.Windows.Debug.RunToCursor}"
+			          icon = "Icons.16x16.Debug.Continue"
+			          class = "ICSharpCode.SharpDevelop.Services.RunToCursorCommand"/>
+			<MenuItem id = "DebuggerSeparator"
+			          insertbefore = "Refactoring"
+			          type = "Separator"/>
+		</Condition>
+		<MenuItem id="BreakpointSeparator" type = "Separator" />
+		
+		<MenuItem id="ChangeBreakPoint" label="${res:MainWindow.Windows.Debug.Conditional.Breakpoints.Breakpoint}" type="Menu">
+			<Include id="SetBreakpoint" item="/SharpDevelop/Workbench/MainMenu/Debug/Toggle Breakpoint" />
+			<Condition name="IsBreakpointSet">
+				<Condition name="IsBreakpointActive">
+					<MenuItem id="DisableBreakpoint"
+					          class="Debugger.AddIn.DisableBreakpointMenuCommand"
+					          label= "${res:MainWindow.Windows.Debug.Conditional.Breakpoints.DisableBreakpoint}" />
+				</Condition>
+				<ComplexCondition>
+					<Not>
+						<Condition name="IsBreakpointActive" />
+					</Not>
+					<MenuItem id="EnableBreakpoint"
+					          class="Debugger.AddIn.EnableBreakpointMenuCommand"
+					          label= "${res:MainWindow.Windows.Debug.Conditional.Breakpoints.EnableBreakpoint}" />
+				</ComplexCondition>
+				<MenuItem id="EditCondition"
+				          class="Debugger.AddIn.EditBreakpointMenuCommand"
+				          label= "${res:MainWindow.Windows.Debug.Conditional.Breakpoints.EditCondition}" />
+			</Condition>
+		</MenuItem>
+	</Path>
+	
+	<Path name = "/SharpDevelop/Workbench/Pads">
+		<Pad id    = "BreakPointsPad"
+		     category = "Debugger"
+		     title    = "${res:MainWindow.Windows.Debug.Breakpoints}"
+		     icon     = "PadIcons.BreakPoints"
+		     class = "ICSharpCode.SharpDevelop.Gui.Pads.BreakPointsPad"
+		     defaultPosition = "Bottom, Hidden" />
+		
+		<Pad id    = "CallStackPad"
+		     category = "Debugger"
+		     title    = "${res:MainWindow.Windows.Debug.CallStack}"
+		     icon     = "PadIcons.CallStack"
+		     class = "ICSharpCode.SharpDevelop.Gui.Pads.CallStackPad"
+		     defaultPosition = "Bottom, Hidden" />
+		
+		<Pad id    = "LoadedModulesPad"
+		     category = "Debugger"
+		     title    = "${res:MainWindow.Windows.Debug.Modules}"
+		     icon     = "PadIcons.LoadedModules"
+		     class = "ICSharpCode.SharpDevelop.Gui.Pads.LoadedModulesPad"
+		     defaultPosition = "Bottom, Hidden" />
+		
+		<Pad id    = "ThreadsPad"
+		     category = "Debugger"
+		     title    = "${res:MainWindow.Windows.Debug.Threads}"
+		     icon     = "PadIcons.Threads"
+		     class = "ICSharpCode.SharpDevelop.Gui.Pads.ThreadsPad"
+		     defaultPosition = "Bottom, Hidden" />
+		
+		<Pad id    = "LocalVarPad"
+		     category = "Debugger"
+		     title    = "${res:MainWindow.Windows.Debug.LocalVariables}"
+		     icon     = "PadIcons.LocalVariables"
+		     class = "ICSharpCode.SharpDevelop.Gui.Pads.LocalVarPad"
+		     defaultPosition = "Bottom, Hidden" />
+		
+		<Pad id    = "ConsolePad"
+		     category = "Debugger"
+		     title    = "${res:MainWindow.Windows.Debug.Console}"
+		     icon     = "PadIcons.Output"
+		     class = "ICSharpCode.SharpDevelop.Gui.Pads.ConsolePad"
+		     defaultPosition = "Bottom, Hidden" />
+		
+		<Pad id    = "WatchPad"
+		     category = "Debugger"
+		     title    = "${res:MainWindow.Windows.Debug.Watch}"
+		     icon     = "PadIcons.LocalVariables"
+		     class = "ICSharpCode.SharpDevelop.Gui.Pads.WatchPad"
+		     defaultPosition = "Bottom, Hidden" />
+	</Path>
+	
+	<Path name ="/SharpDevelop/Pads/WatchPad/ContextMenu">
+		<MenuItem id="AddWatch" label="${res:MainWindow.Windows.Debug.Watch.AddWatch}" class="Debugger.AddIn.AddWatchCommand" />
+		<MenuItem id="RemoveWatch" label="${res:MainWindow.Windows.Debug.Watch.RemoveWatch}" class="Debugger.AddIn.RemoveWatchCommand" />
+		<MenuItem id="ClearWatches" label="${res:MainWindow.Windows.Debug.Watch.RemoveAll}" class="Debugger.AddIn.ClearWatchesCommand" />
+	</Path>
+	
+	<Path name = "/SharpDevelop/Dialogs/OptionsDialog">
+		<OptionPanel id    = "Debugging"
+		             label = "${res:Dialog.Options.IDEOptions.Debugging}"
+		             insertbefore = "TextEditorOptions">
+			<OptionPanel id    = "General"
+			             label = "${res:Dialog.Options.IDEOptions.General}"
+			             class = "Debugger.AddIn.Options.DebuggingOptionsPanel"/>
+			
+			<OptionPanel id    = "Symbols"
+			             label = "${res:Dialog.Options.IDEOptions.Debugging.Symbols}"
+			             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.DebuggingSymbolsPanel"/>
+		</OptionPanel>
+	</Path>
+	
+	<Path name="/SharpDevelop/Pads/ConsolePad/ToolBar">
+		<Include id="StandardCommands" path="/SharpDevelop/Pads/CommonConsole/ToolBar" />
+	</Path>
+	
+	<Path name="/SharpDevelop/Services/DebuggerService/Visualizers">
+		<Class class="Debugger.AddIn.Visualizers.TextVisualizerDescriptor" />
+		<Class class="Debugger.AddIn.Visualizers.XmlVisualizerDescriptor" />
+		<Class class="Debugger.AddIn.Visualizers.ObjectGraphVisualizerDescriptor" />
+		<Class class="Debugger.AddIn.Visualizers.GridVisualizerDescriptor" />
+	</Path>
+</AddIn>
